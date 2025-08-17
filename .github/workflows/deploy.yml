@@ -3,6 +3,7 @@ name: Blue/Green Deploy ECS
 on:
   push:
     branches: [ 'main' ]
+  workflow_dispatch:
 
 env:
   ECR_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO }}
