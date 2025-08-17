@@ -19,9 +19,9 @@
         { "name": "SPRING_PROFILES_ACTIVE", "value": "dev" }
       ],
       "secrets": [
-        { "name": "DB_URL_DEV",      "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb:DB_URL_DEV" },
-        { "name": "DB_USERNAME_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb:DB_USERNAME_DEV" },
-        { "name": "DB_PW_DEV",       "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb:DB_PW_DEV" }
+        { "name": "DB_URL_DEV",      "valueFrom": "dev/app:DB_URL_DEV" },
+        { "name": "DB_USERNAME_DEV", "valueFrom": "dev/app:DB_USERNAME_DEV" },
+        { "name": "DB_PW_DEV",       "valueFrom": "dev/app:DB_PW_DEV" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
