@@ -1,0 +1,37 @@
+{
+  "family": "ecsdeploy-ECS-TD",
+  "requiresCompatibilities": ["EC2"],
+  "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::897722666002:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "897722666002.dkr.ecr.ap-northeast-2.amazonaws.com/scinest-repository:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 8080, "protocol": "tcp" }
+      ],
+
+      "cpu": 512,
+      "memoryReservation": 512,
+
+      "environment": [
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "dev" }
+      ],
+      "secrets": [
+        { "name": "DB_URL_DEV",      "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb/DB_URL_DEV" },
+        { "name": "DB_USERNAME_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb/DB_USERNAME_DEV" },
+        { "name": "DB_PW_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb/DB_PW_DEV" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/ecsdeploy-ECS-TD",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
