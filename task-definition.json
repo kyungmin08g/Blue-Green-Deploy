@@ -5,7 +5,7 @@
   "executionRoleArn": "arn:aws:iam::897722666002:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "app",
+      "name": "ecsdeploy-ECS-Cluster",
       "image": "897722666002.dkr.ecr.ap-northeast-2.amazonaws.com/scinest-repository:latest",
       "essential": true,
       "portMappings": [
