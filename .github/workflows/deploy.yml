@@ -1,0 +1,81 @@
+name: Blue/Green Deploy ECS
+
+on:
+  push:
+    branches: [ 'main' ]
+
+env:
+  ECR_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: AWS 자격증명 (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Java 17 설치하기
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Gradle 캐시
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Gradle 권한 부여
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Gradle 빌드
+        run: ./gradlew clean build -x test
+
+      - name: AWS ECR 로그인
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: AWS ECR에 이미지 빌드 및 푸시
+        run: |
+          TAG=${GITHUB_SHA}
+          docker buildx build --platform linux/amd64 -t $ECR_URI:$TAG . --push
+          echo "IMAGE=$ECR_URI:$TAG" >> $GITHUB_ENV
+
+      - name: Task Definition 재정의
+        run: |
+          jq '.containerDefinitions[0].image = env.IMAGE' task-definition.json > ecs-task-definition.json
+          cat ecs-task-definition.json
+
+      - name: 재정의된 Task Definition 등록
+        id: register
+        run: |
+          ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://task-definition.rendered.json \
+            --query 'taskDefinition.taskDefinitionArn' --output text)
+          echo "TD_ARN=$ARN" >> $GITHUB_OUTPUT
+
+      - name: ECS Service 업데이트 (배포)
+        run: |
+          aws ecs update-service \
+            --cluster "${{ vars.ECS_CLUSTER }}" \
+            --service "${{ vars.ECS_SERVICE }}" \
+            --task-definition "${{ steps.register.outputs.TD_ARN }}" \
+            --force-new-deployment
+
+      - name: 배포 안정화 대기
+        run: aws ecs wait services-stable --cluster "${{ vars.ECS_CLUSTER }}" --services "${{ vars.ECS_SERVICE }}"
