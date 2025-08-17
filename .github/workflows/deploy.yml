@@ -87,5 +87,8 @@ jobs:
             --task-definition "${{ steps.register.outputs.TD_ARN }}" \
             --force-new-deployment
 
-      - name: 배포 안정화 대기
-        run: aws ecs wait services-stable --cluster "${{ vars.ECS_CLUSTER }}" --services "${{ vars.ECS_SERVICE }}"
+      - name: 배포 대기
+        run: |
+          aws ecs wait services-stable --cluster "${{ vars.ECS_CLUSTER }}" --services "${{ vars.ECS_SERVICE }}" \
+            --max-attempts 60 \
+            --delay 20
