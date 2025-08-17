@@ -81,14 +81,6 @@ jobs:
 
       - name: ECS Service 업데이트 (배포)
         run: |
-          aws ecs update-service \
-            --cluster "${{ vars.ECS_CLUSTER }}" \
-            --service "${{ vars.ECS_SERVICE }}" \
+          aws ecs update-service --cluster "${{ vars.ECS_CLUSTER }}" --service "${{ vars.ECS_SERVICE }}" \
             --task-definition "${{ steps.register.outputs.TD_ARN }}" \
             --force-new-deployment
-
-      - name: 배포 대기
-        run: |
-          aws ecs wait services-stable --cluster "${{ vars.ECS_CLUSTER }}" --services "${{ vars.ECS_SERVICE }}" \
-            --max-attempts 60 \
-            --delay 20
