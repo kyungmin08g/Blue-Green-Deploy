@@ -2,11 +2,11 @@
   "family": "ecsdeploy-ECS-TD",
   "requiresCompatibilities": ["EC2"],
   "networkMode": "awsvpc",
-  "executionRoleArn": "arn:aws:iam::897722666002:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::897722666002:role/ECSTaskExecutionRole",
   "containerDefinitions": [
     {
       "name": "ecsdeploy-ECS-Container",
-      "image": "897722666002.dkr.ecr.ap-northeast-2.amazonaws.com/scinest-repository:latest",
+      "image": "897722666002.dkr.ecr.ap-northeast-2.amazonaws.com/ecsdeploy-repository:latest",
       "essential": true,
       "portMappings": [
         { "containerPort": 8080, "protocol": "tcp" }
@@ -19,9 +19,9 @@
         { "name": "SPRING_PROFILES_ACTIVE", "value": "dev" }
       ],
       "secrets": [
-        { "name": "DB_URL_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb:DB_URL_DEV::" },
-        { "name": "DB_USERNAME_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb:DB_USERNAME_DEV::" },
-        { "name": "DB_PW_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/app-Uyvgbb:DB_PW_DEV::" }
+        { "name": "DB_URL_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/ecsdeploy-q6dHgs:DB_URL_DEV::" },
+        { "name": "DB_USERNAME_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/ecsdeploy-q6dHgs:DB_USERNAME_DEV::" },
+        { "name": "DB_PW_DEV", "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:897722666002:secret:dev/ecsdeploy-q6dHgs:DB_PW_DEV::" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
