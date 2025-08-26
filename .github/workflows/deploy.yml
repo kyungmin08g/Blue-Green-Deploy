@@ -20,13 +20,6 @@ jobs:
       - name: 코드 가져오기
         uses: actions/checkout@v4
 
-      - name: 값 확인 (테스트)
-        run: |
-          echo "event=${{ github.event_name }}"
-          echo "ref=${{ github.ref }}"
-          echo "repo=${{ github.repository }}"
-          echo "computed-sub = repo:${{ github.repository }}:ref:${{ github.ref }}"
-
       - name: AWS 자격증명 (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -82,5 +75,4 @@ jobs:
       - name: ECS Service 업데이트 (배포)
         run: |
           aws ecs update-service --cluster "${{ vars.ECS_CLUSTER }}" --service "${{ vars.ECS_SERVICE }}" \
-            --task-definition "${{ steps.register.outputs.TD_ARN }}" \
-            --force-new-deployment
+            --task-definition "${{ steps.register.outputs.TD_ARN }}" --force-new-deployment
